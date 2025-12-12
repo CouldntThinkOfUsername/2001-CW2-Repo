@@ -1,31 +1,11 @@
 openapi: 3.0.0
 info:
   title: "CW2 Authentication API"
-  description: "Management of users"
-  version: "1.0.0"
+  description: "Management of users and CRUD functions with API"
+  version: "1.1.0"
 
 servers:
   - url: "/api"
-
-components:
-  schemas:
-    Person:
-      type: "object"
-      required:
-        - lname
-      properties:
-        fname:
-          type: "string"
-        lname:
-          type: "string"
-  parameters:
-    lname:
-      name: "lname"
-      description: "Last name of the person to get"
-      in: path
-      required: true
-      schema:
-        type: "string"
 
 paths:
   /people:
@@ -33,7 +13,15 @@ paths:
       operationId: "people.read_all"
       tags:
         - People
-      summary: "Read the list of people"
+      summary: "List users or search by username"
+      description: "Returns a list of all people. If a username is provided, filters the list."
+      parameters:
+        - name: username
+          in: query
+          description: "Search/Filter by username"
+          required: false
+          schema:
+            type: "string"
       responses:
         "200":
           description: "Successfully read people list"
@@ -48,7 +36,7 @@ paths:
       operationId: "people.create"
       tags:
         - People
-      summary: "Create a person"
+      summary: "Add a new person to the system"
       requestBody:
         description: "Person to create"
         required: true
@@ -60,40 +48,89 @@ paths:
         "201":
           description: "Successfully created person"
 
-  /people/{lname}:
+  /people/{userId}:
     get:
       operationId: "people.read_one"
       tags:
        - People
-      summary: "Read one person"
+      summary: "Find user information by User ID"
       parameters:
-       - $ref: "#/components/parameters/lname"
+       - $ref: "#/components/parameters/userId"
       responses:
         "200":
          description: "Successfully read person"
+        "404":
+          description: "Person not found"
+
     put:
       tags:
        - People
       operationId: "people.update"
-      summary: "Update a person"
+      summary: "Update a user record by ID"
       parameters:
-      - $ref: "#/components/parameters/lname"
-      responses:
-        "200":
-          description: "Successfully updated person"
+      - $ref: "#/components/parameters/userId"
       requestBody:
+        description: "Person data to update"
+        required: true
         content:
           application/json:
             schema:
-              x-body-name: "person"
               $ref: "#/components/schemas/Person"
+      responses:
+        "200":
+          description: "Successfully updated person"
+        "404":
+          description: "Person not found"
+
     delete:
       tags:
        - People
       operationId: "people.delete"
-      summary: "Delete a person"
+      summary: "Delete user by ID"
       parameters:
-       - $ref: "#/components/parameters/lname"
+       - $ref: "#/components/parameters/userId"
       responses:
         "204":
-          description: "Successfully deleted person"    
+          description: "Successfully deleted person"
+        "404":
+          description: "Person not found"
+
+components:
+  parameters:
+    userId:
+      name: "userId"
+      description: "Unique ID of the user"
+      in: path
+      required: true
+      schema:
+        type: "integer" 
+        format: "int64"
+
+  schemas:
+    Person:
+      type: "object"
+      required:
+        - firstname
+        - lastname
+        - email
+        - user_role
+      properties:
+        userId:
+          type: "integer"
+          format: "int64"
+          readOnly: true
+        username:
+          type: "string"
+        firstname:
+          type: "string"
+        lastname:
+          type: "string"
+        email:
+          type: "string"
+          format: "email"
+        dob:
+          type: "string"
+          format: "date"
+        user_role:
+          type: "string"
+          enum: ["admin", "user"]
