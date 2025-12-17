@@ -14,11 +14,13 @@ The repository includes:
 
 REPOSITORY STRUCTURE:
 2001-CW2-Repo/
-Authentication_API/ Authentication related module(s)
-Create_tables/ SQL scripts to define base tables
-Create_procedures/ Stored procedures used in the database
-Create_trigger/ SQL trigger for logging users
-Create_view/ SQL view
+
+  -Authentication_API/ Authentication related module(s)
+  -Create_tables/ SQL scripts to define base tables
+  -Create_procedures/ Stored procedures used in the database
+  -Create_trigger/ SQL trigger for logging users
+  -Create_view/ SQL view
+  
 CW2_Queries.sql Main SQL query file compiling all of the above
 
 ---------------------------------------------------------------------------------
