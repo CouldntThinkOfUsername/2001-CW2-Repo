@@ -42,22 +42,22 @@ NOTE: order is important — tables, procedures, triggers, views
 
 FILE DESCRIPTIONS
 
-Authentication_API
+Authentication_API:
 Contains source code for authentication API.
 
-Create_tables
+Create_tables:
 Contains SQL scripts for creating tables.
 
-Create_procedures
+Create_procedures:
 Contains stored procedures.
 
-Create_trigger
+Create_trigger:
 Contains trigger definition.
 
-Create_view
+Create_view:
 Contains the SQL view.
 
-CW2_Queries.sql
+CW2_Queries.sql:
 Contains the entire query file with all compiled.
 
 ---------------------------------------------------------------------------------
