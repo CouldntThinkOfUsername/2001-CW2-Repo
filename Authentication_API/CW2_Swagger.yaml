@@ -1,136 +1,74 @@
 openapi: 3.0.0
 info:
-  title: "CW2 Authentication API"
-  description: "Management of users and CRUD functions with API"
-  version: "1.1.0"
+  title: "CW2 User API"
+  description: "API for accessing CW2 User Data"
+  version: "1.0.0"
 
 servers:
   - url: "/api"
 
+components:
+  schemas:
+    User:
+      type: "object"
+      required:
+        - first_name
+        - last_name
+        - date_of_birth
+      properties:
+        user_id:
+          type: "integer"
+          readOnly: true
+        first_name:
+          type: "string"
+        last_name:
+          type: "string"
+        date_of_birth:
+          type: "string"
+          format: "date"
+          example: "2000-01-01"
+        user_role:
+          type: "string"
+          enum: ["Admin", "User"]
+
+  parameters:
+    userId:
+      name: "user_id"
+      description: "ID of the user to fetch"
+      in: path
+      required: true
+      schema:
+        type: "integer"
+
 paths:
-  /people:
+  /users:
     get:
-      operationId: "people.read_all"
+      operationId: "users.read_all"
       tags:
-        - People
-      summary: "List users or search by username"
-      description: "Returns a list of all people. If a username is provided, filters the list."
-      parameters:
-        - name: username
-          in: query
-          description: "Search/Filter by username"
-          required: false
-          schema:
-            type: "string"
+        - Users
+      summary: "Read the list of users"
       responses:
         "200":
-          description: "Successfully read people list"
+          description: "Successfully read user list"
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Person"
+                  $ref: "#/components/schemas/User"
 
-    post:
-      operationId: "people.create"
-      tags:
-        - People
-      summary: "Add a new person to the system"
-      requestBody:
-        description: "Person to create"
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Person"
-      responses:
-        "201":
-          description: "Successfully created person"
-
-  /people/{userId}:
+  /users/{user_id}:
     get:
-      operationId: "people.read_one"
+      operationId: "users.read_one"
       tags:
-       - People
-      summary: "Find user information by User ID"
+        - Users
+      summary: "Read one user by ID"
       parameters:
-       - $ref: "#/components/parameters/userId"
+        - $ref: "#/components/parameters/userId"
       responses:
         "200":
-         description: "Successfully read person"
-        "404":
-          description: "Person not found"
-
-    put:
-      tags:
-       - People
-      operationId: "people.update"
-      summary: "Update a user record by ID"
-      parameters:
-      - $ref: "#/components/parameters/userId"
-      requestBody:
-        description: "Person data to update"
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Person"
-      responses:
-        "200":
-          description: "Successfully updated person"
-        "404":
-          description: "Person not found"
-
-    delete:
-      tags:
-       - People
-      operationId: "people.delete"
-      summary: "Delete user by ID"
-      parameters:
-       - $ref: "#/components/parameters/userId"
-      responses:
-        "204":
-          description: "Successfully deleted person"
-        "404":
-          description: "Person not found"
-
-components:
-  parameters:
-    userId:
-      name: "userId"
-      description: "Unique ID of the user"
-      in: path
-      required: true
-      schema:
-        type: "integer" 
-        format: "int64"
-
-  schemas:
-    Person:
-      type: "object"
-      required:
-        - firstname
-        - lastname
-        - email
-        - user_role
-      properties:
-        userId:
-          type: "integer"
-          format: "int64"
-          readOnly: true
-        username:
-          type: "string"
-        firstname:
-          type: "string"
-        lastname:
-          type: "string"
-        email:
-          type: "string"
-          format: "email"
-        dob:
-          type: "string"
-          format: "date"
-        user_role:
-          type: "string"
-          enum: ["admin", "user"]
+          description: "Successfully read user"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"

@@ -1,115 +1,83 @@
+import requests
 from flask import abort, make_response
 
-NEXT_ID = 4
-PEOPLE = {
-    1: {
-        "userId": 1,
-        "fname": "Grace",
-        "lname": "Hopper",
-        "username": "ghopper",
-        "email": "grace@plymouth.ac.uk",     
-        "password": "ISAD123!",              
-        "dob": "1906-12-09",
-        "user_role": "user"
-    },
-    2: {
-        "userId": 2,
-        "fname": "Tim",
-        "lname": "Berners-Lee",
-        "username": "timbl",
-        "email": "tim@plymouth.ac.uk",       
-        "password": "COMP2001!",             
-        "dob": "1955-06-08",
-        "user_role": "user"
-    },
-    3: {
-        "userId": 3,
-        "fname": "Ada",
-        "lname": "Lovelace",
-        "username": "ada_love",
-        "email": "ada@plymouth.ac.uk",       
-        "password": "insecurePassword",      
-        "dob": "1815-12-10",
-        "user_role": "user"
-    },
-}
+BASE_URL = "https://web.socem.plymouth.ac.uk/COMP2001/auth/api/users"
 
 def read_all(username=None):
     """
     Responds to GET /people
-    If 'username' query param is present, filter by it.
+    Fetches the list of all users from the external Plymouth API.
     """
-    people_list = list(PEOPLE.values())
-    
-    if username:
-        matches = [p for p in people_list if p['username'] == username]
-        return matches
+    try:
+        response = requests.get(BASE_URL)
         
-    return people_list
-
-def create(person):
-    """
-    Responds to POST /people
-    """
-    global NEXT_ID
-    
-    username = person.get("username")
-    email = person.get("email")
-    
-    existing_usernames = [p['username'] for p in PEOPLE.values()]
-    existing_emails = [p['email'] for p in PEOPLE.values()]
-    
-    if username in existing_usernames:
-         abort(406, f"User with username {username} already exists")
-    
-    if email in existing_emails:
-         abort(406, f"User with email {email} already exists")
-
-     
-    new_id = NEXT_ID
-    NEXT_ID += 1
-    
-    person["userId"] = new_id
-    PEOPLE[new_id] = person
-    
-    return PEOPLE[new_id], 201
+        if response.status_code == 200:
+            users_list = response.json()
+            
+            if username:
+                return [user for user in users_list if user.get('username') == username]
+            
+            return users_list
+        else:
+            return []
+    except Exception as e:
+        print(f"Error connecting to Plymouth API: {e}")
+        return []
 
 def read_one(userId):
     """
     Responds to GET /people/{userId}
+    Fetches a specific user by their ID from the external API.
     """
-    if userId in PEOPLE:
-        return PEOPLE[userId]
+    url = f"{BASE_URL}/{userId}"
+    
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        return response.json()
     else:
         abort(404, f"Person with ID {userId} not found")
+
+def create(person):
+    """
+    Responds to POST /people
+    Sends your JSON data to the Plymouth API to verify/create the user.
+    """
+    headers = {"Content-Type": "application/json"}
+    
+    response = requests.post(BASE_URL, json=person, headers=headers)
+    
+    if response.status_code in [200, 201]:
+        return response.json(), 201
+    else:
+        abort(response.status_code, f"External API Error: {response.text}")
 
 def update(userId, person):
     """
     Responds to PUT /people/{userId}
+    Updates a user record via the external API.
     """
-    if userId in PEOPLE:
-        existing_person = PEOPLE[userId]
-        
-        existing_person["fname"] = person.get("fname", existing_person["fname"])
-        existing_person["lname"] = person.get("lname", existing_person["lname"])
-        existing_person["email"] = person.get("email", existing_person["email"])
-        existing_person["dob"] = person.get("dob", existing_person["dob"])
-        existing_person["user_role"] = person.get("user_role", existing_person["user_role"])
-        existing_person["password"] = person.get("password", existing_person.get("password"))
-        
-        PEOPLE[userId] = existing_person
-        return existing_person
-    else:
+    url = f"{BASE_URL}/{userId}"
+    headers = {"Content-Type": "application/json"}
+    
+    response = requests.put(url, json=person, headers=headers)
+    
+    if response.status_code == 200:
+        return response.json()
+    elif response.status_code == 404:
         abort(404, f"Person with ID {userId} not found")
+    else:
+        abort(response.status_code, "Update failed")
 
 def delete(userId):
     """
     Responds to DELETE /people/{userId}
     """
-    if userId in PEOPLE:
-        del PEOPLE[userId]
-        return make_response(
-            f"Person with ID {userId} successfully deleted", 200
-        )
+    url = f"{BASE_URL}/{userId}"
+    
+    response = requests.delete(url)
+    
+    if response.status_code in [200, 204]:
+        return make_response(f"Person {userId} deleted", 204)
     else:
-        abort(404, f"Person with ID {userId} not found")
+        abort(404, f"Delete failed or ID {userId} not found")
