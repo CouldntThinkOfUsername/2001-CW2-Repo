@@ -61,12 +61,3 @@ CW2_Queries.sql:
 Contains the entire query file with all compiled.
 
 ---------------------------------------------------------------------------------
-
-TESTING
-
-To test the database:
-* Start database server
-* Connect
-* Run the scripts in the order listed above
-
----------------------------------------------------------------------------------
