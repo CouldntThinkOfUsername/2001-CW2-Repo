@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ user.first_name }}'s Profile</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .card { border: 1px solid #ccc; padding: 20px; max-width: 400px; }  
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>User Profile</h1>
+        <p><strong>ID:</strong> {{ user.user_id }}</p>
+        <p><strong>Name:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+        <p><strong>Role:</strong> {{ user.user_role }}</p>
+        <p><strong>DOB:</strong> {{ user.date_of_birth }}</p>
+        
+    </div>
+</body>
+</html>
