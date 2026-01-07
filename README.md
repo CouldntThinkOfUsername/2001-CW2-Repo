@@ -71,3 +71,11 @@ CW2_Queries.sql:
 Contains the entire query file with all compiled.
 
 ---------------------------------------------------------------------------------
+
+TO USE 
+
+ * clone the repo
+ * Run docker
+ * Run CW2_API.py
+ * interact with the endpoints found at URL/api/ui
+
