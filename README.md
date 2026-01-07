@@ -44,6 +44,10 @@ docker build -t cw2_api .
 docker tag cw2_api:latest jamiewoodacre/a2:v1.0
 docker push jamiewoodacre/a2:v1.0
 
+pulling docker image:
+
+docker pull jamiewoodacre/a2:v1.0
+
 ---------------------------------------------------------------------------------
 
 FILE DESCRIPTIONS
