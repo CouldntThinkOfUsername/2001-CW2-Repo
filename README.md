@@ -38,6 +38,12 @@ git clone https://github.com/CouldntThinkOfUsername/2001-CW2-Repo.git
 
 NOTE: order is important — tables, procedures, triggers, views
 
+Docker image setup:
+
+docker build -t cw2_api .
+docker tag cw2_api:latest jamiewoodacre/a2:v1.0
+docker push jamiewoodacre/a2:v1.0
+
 ---------------------------------------------------------------------------------
 
 FILE DESCRIPTIONS
